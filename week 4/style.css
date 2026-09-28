@@ -1,0 +1,129 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+}
+
+#container {
+  width:80%;
+}
+
+canvas {
+  display: block;
+}
+
+#videoContainer {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+}
+
+#video {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+#colorOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+input[id="play"] {
+  -webkit-appearance: none;
+  width: 80%;
+  height: 20px;
+  margin: 10px 5px;
+  background: linear-gradient(to right, black 0%, red 100%);
+  background-size: 100% 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  outline: none;
+}
+
+input[id="play"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+input[id="cplay"] {
+ -webkit-appearance: none;
+  width: 80%;
+  height: 20px;
+  margin: 10px 5px;
+  margin-left: 30px;
+  background: transparent;
+  outline: none;
+}
+
+input[id="cplay"]::-webkit-slider-runnable-track {
+  height: 20px;
+  background: linear-gradient(to right, red 0%, orange 20%, green 50%, blue 100%);
+  border-radius: 10px;
+}
+
+
+input[id="cplay"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+input[id="iplay"] {
+ -webkit-appearance: none;
+  width: 80%;
+  height: 20px;
+  margin: 10px 5px;
+  margin-left: 30px;
+  background: transparent;
+  outline: none;
+}
+
+input[id="iplay"]::-webkit-slider-runnable-track {
+  height: 20px;
+  background: linear-gradient(to right, beige 0%, gray 100%);
+  border-radius: 10px;
+}
+
+input[id="iplay"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+#button {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top:25px;
+  
+}
+
+#stop {
+  background-color: lightgray;
+  font-size: 20px;
+  border-radius: 8px;
+  padding: 15px 30px;
+  border: none;
+  box-shadow: none;
+}
+
+#save {
+  background-color: lightgray;
+  font-size: 20px;
+  border-radius: 8px;
+  padding: 15px 30px;
+  border: none;
+}
