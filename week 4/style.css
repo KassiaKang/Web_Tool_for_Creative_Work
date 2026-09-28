@@ -4,20 +4,18 @@ html, body {
   font-family: "Montserrat", sans-serif;
 }
 
-#container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
+main {
+  width: 100%;
 }
 
-canvas {
-  display: block;
+#container {
+  width: 90%;
+  margin: 0 auto;
 }
 
 #videoContainer {
   position: relative;
   width: 100%;
-  margin: 0 auto;
 }
 
 #video {
@@ -32,39 +30,32 @@ canvas {
   pointer-events: none;
 }
 
-input[id="play"] {
-  -webkit-appearance: none;
+#colorPlay,
+#intensePlay {
+  display: flex;
+  align-items: center;
   width: 100%;
-  height: 20px;
-  margin: 10px 0;
-  background: linear-gradient(to right, black 0%, red 100%);
-  background-size: 100% 10px;
-  background-position: center;
-  background-repeat: no-repeat;
-  outline: none;
-  box-sizing: border-box;
+  gap: 12px;
 }
 
-input[id="play"]::-webkit-slider-thumb {
+#cplay,
+#iplay {
   -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  background: white;
-  cursor: pointer;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-input[id="cplay"] {
-  -webkit-appearance: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 20px;
   margin: 10px 0;
   background: transparent;
   outline: none;
-  box-sizing: border-box;
 }
 
-input[id="cplay"]::-webkit-slider-runnable-track {
+#colorPlay label,
+#intensePlay label {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+#cplay::-webkit-slider-runnable-track {
   height: 20px;
   background: linear-gradient(
     to right,
@@ -76,7 +67,7 @@ input[id="cplay"]::-webkit-slider-runnable-track {
   border-radius: 10px;
 }
 
-input[id="cplay"]::-webkit-slider-thumb {
+#cplay::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -85,23 +76,17 @@ input[id="cplay"]::-webkit-slider-thumb {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-input[id="iplay"] {
-  -webkit-appearance: none;
-  width: 100%;
+#iplay::-webkit-slider-runnable-track {
   height: 20px;
-  margin: 10px 0;
-  background: transparent;
-  outline: none;
-  box-sizing: border-box;
-}
-
-input[id="iplay"]::-webkit-slider-runnable-track {
-  height: 20px;
-  background: linear-gradient(to right, beige 0%, gray 100%);
+  background: linear-gradient(
+    to right,
+    beige 0%,
+    gray 100%
+  );
   border-radius: 10px;
 }
 
-input[id="iplay"]::-webkit-slider-thumb {
+#iplay::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -124,6 +109,5 @@ input[id="iplay"]::-webkit-slider-thumb {
   border-radius: 8px;
   padding: 15px 30px;
   border: none;
-  box-shadow: none;
   cursor: pointer;
 }
