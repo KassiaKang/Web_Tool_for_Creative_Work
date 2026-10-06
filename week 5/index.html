@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/dist/p5.sound.min.js"></script>
+    
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8" />
+
+  </head>
+ <body>
+  <main>
+
+    <div id="container">
+
+      <ul id="menu">
+        <li> <img src="baby.jpg" data-video="dance.mp4"></li>
+        <li><img src="ai.png" data-video="dance2.mp4"></li>
+      </ul>
+
+      <div id="videoContainer">
+
+        <div id="videoWrapper">
+          <video
+            id="video"
+            crossorigin="anonymous"
+            src="dance.mp4"
+            muted>
+          </video>
+
+          <div id="colorOverlay"></div>
+        </div>
+
+        <div id="colorPlay">
+          <input type="range" id="cplay">
+          <label for="cplay">Color</label>
+        </div>
+
+        <div id="intensePlay">
+          <input type="range" id="iplay">
+          <label for="iplay">Opacity</label>
+        </div>
+
+      </div>
+
+      <div id="button">
+        <button id="stop">Stop</button>
+        <button id="save">Save</button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
