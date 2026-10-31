@@ -1,0 +1,915 @@
+/* ===== DESIGN TOKENS ===== */
+
+:root {
+    --ink: #111;             /* text and lines */
+    --paper: #fff;           /* page background */
+    --lime: #e4fb7e;         /* accent (selected, corner squares, knobs) */
+    --stage: #d9d9d9;        /* empty canvas area */
+    --line: 1px solid var(--ink);
+    --head: 58px;            /* height of the column title row */
+    --font: "Red Hat Display", "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background-color: var(--paper);
+}
+
+main {
+    padding: 24px 28px;
+}
+
+button {
+    font-size: 15px;
+    font-family: inherit;
+}
+
+/* ===== LOGO ===== */
+
+#logo {
+    margin: 0;
+    line-height: 0;
+}
+
+#logo img {
+    display: block;
+    height: 58px;
+    width: auto;
+    max-width: 100%;
+}
+
+/* ===== MAIN LAYOUT: three columns ===== */
+
+#container {
+    display: grid;
+    grid-template-columns: 15% 1fr 21%;
+    grid-template-rows: minmax(0, 1fr);   /* keep every column inside the fixed height */
+    width: 100%;
+    height: 620px;
+    margin-top: 16px;
+}
+
+/* Column titles: Effect Library / Effect Controls */
+#library h2,
+#effectControls h3 {
+    height: var(--head);
+    margin: 0;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    border-bottom: var(--line);
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+/* LEFT: EFFECT LIBRARY */
+
+#library {
+    display: flex;
+    flex-direction: column;
+    border-bottom: var(--line);
+    margin-right: 14px;          /* gap before the corner square */
+    min-width: 0;
+}
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Effect Library items: plain white by default */
+#menu button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 22px 18px;
+    border: none;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-align: left;
+    cursor: pointer;
+}
+
+#menu button:hover {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 1px;
+}
+
+/* Selected item: lime box with lines above and below */
+#menu button.selected {
+    background-color: var(--lime);
+    border-top: var(--line);
+    border-bottom: var(--line);
+    text-decoration: none;
+}
+
+#menu button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: -4px;
+}
+
+/* CENTER: CANVAS */
+
+#OverlayContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    margin-top: var(--head);     /* starts at the title line */
+    padding: 16px;
+    box-sizing: border-box;
+    border: var(--line);
+}
+
+#oCanvas {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background-color: var(--stage);
+}
+
+/* Lime corner squares where the lines meet */
+#OverlayContainer::before,
+#OverlayContainer::after,
+#effectControls::before,
+#effectControls::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: var(--lime);
+    border: var(--line);
+    box-sizing: border-box;
+    box-shadow: 0 0 0 5px var(--paper);   /* small gap around each square */
+    z-index: 1;
+}
+
+/* Left corners of the canvas frame */
+#OverlayContainer::before { top: -6.5px;    left: -6.5px; }
+#OverlayContainer::after  { bottom: -6.5px; left: -6.5px; }
+
+/* RIGHT: EFFECT CONTROLS */
+
+#effectControls {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding-left: 14px;          /* gap after the corner square */
+    min-height: 0;
+    border-bottom: var(--line);
+    box-sizing: border-box;
+}
+
+/* Right corners of the canvas frame (sit on this column's left edge) */
+#effectControls::before { top: calc(var(--head) - 6.5px); left: -6.5px; }
+#effectControls::after  { bottom: -6.5px;                 left: -6.5px; }
+
+#effectControls > :not(h3) {
+    margin-left: 14px;
+}
+
+#effectControls > button:first-of-type,
+#effectControls > #previewButton {
+    margin-top: 20px;
+}
+
+#effectControls [hidden] {
+    display: none !important;
+}
+
+/* ===== EFFECT CONTROLS: label + number on one row, slider below ===== */
+
+#Graineffect,
+#LightLeakeffect,
+#Particleeffect {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-auto-flow: row dense;     /* number box fills the space next to its label */
+    align-items: center;
+    align-content: start;
+    column-gap: 12px;
+    row-gap: 4px;
+    margin-top: 14px;
+    margin-right: 0;
+    padding: 2px 14px 14px 0;
+
+    /* Scroll inside the panel when there are many controls */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Let the slider and number box take part in the grid directly */
+#Graineffect .controlRow,
+#LightLeakeffect .controlRow,
+#Particleeffect .controlRow {
+    display: contents;
+}
+
+/* Labels: Intensity, Size, ... */
+#Graineffect label,
+#LightLeakeffect label,
+#Particleeffect label {
+    grid-column: 1;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+/* Number box: thin black frame, top right */
+#Graineffect input[type="number"],
+#LightLeakeffect input[type="number"],
+#Particleeffect input[type="number"] {
+    grid-column: 2;
+    width: 60px;
+    height: 30px;
+    padding: 0 6px;
+    border: var(--line);
+    border-radius: 0;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 13px;
+    text-align: center;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+}
+
+#Graineffect input[type="number"]::-webkit-inner-spin-button,
+#Graineffect input[type="number"]::-webkit-outer-spin-button,
+#LightLeakeffect input[type="number"]::-webkit-inner-spin-button,
+#Particleeffect input[type="number"]::-webkit-inner-spin-button,
+#LightLeakeffect input[type="number"]::-webkit-outer-spin-button,
+#Particleeffect input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Slider: full row under the label, slightly indented */
+#Graineffect input[type="range"],
+#LightLeakeffect input[type="range"],
+#Particleeffect input[type="range"] {
+    grid-column: 1 / -1;
+    -webkit-appearance: none;
+    appearance: none;
+    width: calc(100% - 36px);
+    height: 34px;               /* room for the knob */
+    margin: 0 0 6px 36px;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Track: thin outlined bar */
+#Graineffect input[type="range"]::-webkit-slider-runnable-track,
+#LightLeakeffect input[type="range"]::-webkit-slider-runnable-track,
+#Particleeffect input[type="range"]::-webkit-slider-runnable-track {
+    height: 9px;
+    border: var(--line);
+    background-color: var(--paper);
+    box-sizing: border-box;
+}
+
+#Graineffect input[type="range"]::-moz-range-track,
+#LightLeakeffect input[type="range"]::-moz-range-track,
+#Particleeffect input[type="range"]::-moz-range-track {
+    height: 9px;
+    border: var(--line);
+    background-color: var(--paper);
+    box-sizing: border-box;
+}
+
+/* Knob: lime circle with a black outline */
+#Graineffect input[type="range"]::-webkit-slider-thumb,
+#LightLeakeffect input[type="range"]::-webkit-slider-thumb,
+#Particleeffect input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    margin-top: -9px;        /* center the knob on the 9px track */
+    border: var(--line);
+    border-radius: 50%;
+    background-color: var(--lime);
+    box-sizing: border-box;
+}
+
+#Graineffect input[type="range"]::-moz-range-thumb,
+#LightLeakeffect input[type="range"]::-moz-range-thumb,
+#Particleeffect input[type="range"]::-moz-range-thumb {
+    width: 34px;
+    height: 34px;
+    border: var(--line);
+    border-radius: 50%;
+    background-color: var(--lime);
+    box-sizing: border-box;
+}
+
+#Graineffect input[type="range"]:focus-visible,
+#LightLeakeffect input[type="range"]:focus-visible,
+#Particleeffect input[type="range"]:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+}
+
+/* Color dropdown: black frame with a solid triangle */
+#Graineffect select,
+#LightLeakeffect select,
+#Particleeffect select {
+    grid-column: 1 / -1;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 40px;
+    padding: 0 44px 0 12px;
+    border: var(--line);
+    border-radius: 0;
+    background-color: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='18'><path d='M0 0h22L11 18z' fill='%23111'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px 15px;
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Hue sliders (Grain + Particles): rainbow track, knob shows the picked color */
+#Graineffect input#grainHue::-webkit-slider-runnable-track,
+#Particleeffect input#ptHue::-webkit-slider-runnable-track {
+    background: linear-gradient(to right,
+        #fff 0%, hsl(0, 100%, 50%) 2.8%,
+        hsl(60, 100%, 50%) 19%, hsl(120, 100%, 50%) 35%,
+        hsl(180, 100%, 50%) 51%, hsl(240, 100%, 50%) 68%,
+        hsl(300, 100%, 50%) 84%, hsl(360, 100%, 50%) 100%);
+}
+
+#Graineffect input#grainHue::-moz-range-track,
+#Particleeffect input#ptHue::-moz-range-track {
+    background: linear-gradient(to right,
+        #fff 0%, hsl(0, 100%, 50%) 2.8%,
+        hsl(60, 100%, 50%) 19%, hsl(120, 100%, 50%) 35%,
+        hsl(180, 100%, 50%) 51%, hsl(240, 100%, 50%) 68%,
+        hsl(300, 100%, 50%) 84%, hsl(360, 100%, 50%) 100%);
+}
+
+#Graineffect input#grainHue::-webkit-slider-thumb,
+#Particleeffect input#ptHue::-webkit-slider-thumb {
+    background-color: var(--hue-color, var(--lime));
+}
+
+#Graineffect input#grainHue::-moz-range-thumb,
+#Particleeffect input#ptHue::-moz-range-thumb {
+    background-color: var(--hue-color, var(--lime));
+}
+
+/* "Color" label takes its whole row (no number box next to it) */
+#Graineffect label[for="color"],
+#LightLeakeffect label[for="llColor"] {
+    grid-column: 1 / -1;
+}
+
+/* Space between the Color dropdown and the Hue row */
+#Graineffect label.hueOnly {
+    margin-top: 8px;
+}
+
+/* Color dropdown and color swatch: same start and width as the sliders */
+#Graineffect select,
+#LightLeakeffect select,
+#Particleeffect select {
+    width: calc(100% - 36px);
+    margin-left: 36px;
+}
+
+/* ===== BOTTOM: TIMELINE ===== */
+
+:root {
+    --name-w: 120px;      /* layer name column */
+    --mode-w: 140px;      /* blend mode dropdown column */
+    --trash-space: 120px; /* room on the right for the Trash button */
+}
+
+#timeline {
+    width: 100%;
+    padding-top: 30px;
+    box-sizing: border-box;
+}
+
+/* Shared outlined-box button look (Add Layer, Export, Trash) */
+#addLayer,
+#export,
+.trashButton {
+    border: var(--line);
+    border-radius: 0;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    cursor: pointer;
+}
+
+#addLayer:hover,
+#export:hover:not(:disabled),
+.trashButton:hover {
+    background-color: var(--lime);
+}
+
+/* Top bar */
+#timelineHeader {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 28px;
+}
+
+#addLayer {
+    padding: 10px 16px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+#totalTime {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;          /* push Total + Export to the right */
+}
+
+#totalTime span {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Editable time: framed box like the other number boxes */
+#exportDuration {
+    width: 80px;
+    height: 40px;
+    padding: 0 8px;
+    border: var(--line);
+    border-radius: 0;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 18px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    box-sizing: border-box;
+    cursor: text;
+}
+
+#exportDuration:hover {
+    background-color: var(--lime);
+}
+
+#exportDuration:focus {
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+    background-color: var(--paper);
+}
+
+/* Export: one framed box split in two (Export | triangle) */
+#exportGroup {
+    position: relative;
+    display: flex;
+    border: var(--line);
+}
+
+#exportGroup button {
+    border: none;
+}
+
+#export {
+    padding: 10px 16px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+#export:disabled {
+    cursor: progress;
+    background-color: var(--lime);
+}
+
+#exportMenuButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    padding: 0;
+    border-left: var(--line) !important;
+    background-color: var(--paper);
+    cursor: pointer;
+}
+
+#exportMenuButton::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 16px solid var(--ink);
+}
+
+#exportMenuButton:hover,
+#exportMenuButton[aria-expanded="true"] {
+    background-color: var(--lime);
+}
+
+/* Layer list that drops down under Export */
+#exportMenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: -1px;
+    min-width: 260px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: var(--line);
+    background-color: var(--paper);
+    z-index: 20;
+}
+
+#exportMenu li + li {
+    border-top: var(--line);
+}
+
+#exportMenu button {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding: 10px 14px;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 14px;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#exportMenu button:hover {
+    background-color: var(--lime);
+}
+
+#exportMenu button:disabled {
+    color: #999;
+    cursor: default;
+    background-color: var(--paper);
+}
+
+/* Quality picker at the top of the Export menu */
+#exportMenu .qualityRow {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 12px;
+    padding: 10px 14px;
+}
+
+#exportMenu .qualityLabel {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#exportMenu .qualityOptions {
+    display: flex;
+    border: var(--line);
+}
+
+#exportMenu .qualityOptions button.qualityOption {
+    flex: 1;
+    justify-content: center;
+    padding: 6px 8px;
+    font-size: 13px;
+    text-align: center;
+}
+
+#exportMenu .qualityOptions button.qualityOption + button.qualityOption {
+    border-left: var(--line);
+}
+
+#exportMenu .qualityOptions button.qualityOption[aria-pressed="true"] {
+    background-color: var(--lime);
+    font-weight: 700;
+}
+
+#exportMenu .qualityNote {
+    grid-column: 2;
+    color: #666;
+    font-size: 12px;
+}
+
+#exportMenu .menuDetail {
+    color: #666;
+    font-variant-numeric: tabular-nums;
+}
+
+/* LAYERS */
+
+#timelineLayers {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Each row: name | blend mode | track  (Trash sits outside on the right) */
+.timelineRow {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 8px 14px;
+    margin-right: var(--trash-space);
+    border: 1px solid transparent;
+    box-sizing: border-box;
+}
+
+/* Layers can be clicked to select them */
+.layerRow {
+    cursor: pointer;
+}
+
+/* Selected layer: lime row */
+.timelineRow.selected {
+    background-color: var(--lime);
+    border: var(--line);
+}
+
+.effectName {
+    width: var(--name-w);
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.timelineRow.selected .effectName {
+    font-weight: 700;
+}
+
+/* Blend mode dropdown: black frame with a solid triangle */
+.overlayMode {
+    width: var(--mode-w);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+select.overlayMode {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 40px;
+    padding: 0 36px 0 14px;
+    border: var(--line);
+    border-radius: 0;
+    background-color: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='18'><path d='M0 0h22L11 18z' fill='%23111'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px 15px;
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 15px;
+    text-transform: lowercase;
+    cursor: pointer;
+}
+
+/* TIME RULER */
+
+#timeRulerRow {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.rulerSpacer {
+    visibility: hidden;
+}
+
+#timeRuler {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 30px;
+    border-bottom: var(--line);
+    box-sizing: border-box;
+}
+
+/* Tick marks (created in sketch.js): only the 30-second ticks are shown */
+.rulerMark {
+    display: none;
+}
+
+.rulerMark.major {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 7px;
+    background-color: var(--ink);
+}
+
+.rulerMark.major:last-of-type {
+    transform: translateX(-1px);
+}
+
+/* Time labels */
+.rulerTick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* Keep the first and last labels inside the ruler */
+.rulerTick:first-child {
+    transform: none;
+}
+
+.rulerTick:last-of-type {
+    transform: translateX(-100%);
+}
+
+/* TRACK */
+
+.timelineTrack {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 30px;
+    border: var(--line);
+    background-color: var(--paper);
+    box-sizing: border-box;
+}
+
+/* Clip: gray bar = the part of the timeline this layer exports.
+   Drag the middle to move it, drag either end to change its length.
+   Position and width are set in sketch.js. */
+.effectClip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 25%;
+    height: 100%;
+    background-color: #aaa;
+    border-left: var(--line);
+    border-right: var(--line);
+    box-sizing: border-box;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.effectClip.dragging {
+    cursor: grabbing;
+    background-color: #999;
+}
+
+/* Handles on both ends of the clip */
+.resizeHandle {
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 100%;
+    cursor: ew-resize;
+    background-color: transparent;
+    touch-action: none;
+    user-select: none;
+}
+
+.resizeHandle.start { left: 0; }
+.resizeHandle.end   { right: 0; }
+
+.effectClip:hover .resizeHandle,
+.resizeHandle:hover {
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+/* Trash: outlined box outside the row, on the right */
+.trashButton {
+    position: absolute;
+    left: calc(100% + 15px + 22px);   /* past the row padding and border */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 5;
+}
+
+/* ===== PREVIEW TOGGLE ===== */
+#previewButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 15px 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 15px;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* Pill-shaped track: black outline like the other controls */
+.toggleTrack {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    border: var(--line);
+    border-radius: 13px;
+    background-color: var(--paper);
+    box-sizing: border-box;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+/* Round knob: white with a black outline */
+.toggleKnob {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 22px;
+    height: 22px;
+    border: var(--line);
+    border-radius: 50%;
+    background-color: var(--paper);
+    box-sizing: border-box;
+    transition: transform 0.2s ease;
+}
+
+/* ON state: lime track, knob slides right */
+#previewButton[aria-checked="true"] .toggleTrack,
+.layerToggle[aria-checked="true"] .toggleTrack {
+    background-color: var(--lime);
+}
+
+#previewButton[aria-checked="true"] .toggleKnob,
+.layerToggle[aria-checked="true"] .toggleKnob {
+    transform: translateX(20px);
+}
+
+#previewButton:focus-visible .toggleTrack {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}
+
+/* Layer on/off toggle at the front of each row */
+.layerToggle {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: 46px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.layerToggle:focus-visible .toggleTrack {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}
+
+/* Hidden layer: dim the row */
+.layerRow.layerOff .effectName,
+.layerRow.layerOff .overlayMode,
+.layerRow.layerOff .timelineTrack {
+    opacity: 0.35;
+}
+
+/* EMPTY LAYER */
+
+.emptyLayer .effectName {
+    color: #777;
+}
+
+.emptyLayer .timelineTrack {
+    background-color: #f4f4f4;
+}

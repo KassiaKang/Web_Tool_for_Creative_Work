@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main>
+
+    <h1 id="logo"><img src="rootfolder/logo.png" alt="Overlay Lab"></h1>
+
+    <div id="container">
+
+        <!-- LEFT: Effect Library -->
+        <div id="library">
+
+        <h2>Effect Library</h2>
+
+        <ul id="menu">
+            <li><button id="grainButton">Grain</button></li>
+            <li><button id="lightLeakButton">Light Leak</button></li>
+            <li><button id="particleButton">Particles</button></li>
+        </ul>
+
+        </div>
+
+        <!-- CENTER: Canvas Preview -->
+        <div id="OverlayContainer">
+            <canvas id="oCanvas"></canvas>
+        </div>
+
+        <!-- RIGHT: Effect Controls -->
+        <div id="effectControls">
+
+            <h3>Effect Controls</h3>
+
+             <!-- Preview Button -->
+        <button id="previewButton" role="switch" aria-checked="false">
+            <span class="toggleTrack"><span class="toggleKnob"></span></span>
+            <span class="toggleLabel">Preview</span>
+        </button>
+
+            <div id="Graineffect" hidden>
+
+                <label for="intense">Intensity</label>
+                <div class="controlRow">
+                    <input type="range" id="intense"
+                           min="0" max="100" value="50">
+                    <input type="number" id="intenseValue"
+                           min="0" max="100" value="50">
+                </div>
+
+                <label for="Grainsize">Size</label>
+                <div class="controlRow">
+                    <input type="range" id="Grainsize"
+                           min="1" max="20" value="1">
+                    <input type="number" id="GrainsizeValue"
+                           min="1" max="20" value="1">
+                </div>
+
+                <label for="speed">Speed</label>
+                <div class="controlRow">
+                    <input type="range" id="speed"
+                           min="0" max="60" value="30">
+                    <input type="number" id="speedValue"
+                           min="0" max="60" value="30">
+                </div>
+
+                <label for="color">Color</label>
+                <select id="color">
+                    <option value="BW">B&W</option>
+                    <option value="VHS">VHS</option>
+                    <option value="colorcustomize">Customize</option>
+                </select>
+
+                <!-- Hue slider: only shown when Color = Customize -->
+                <label for="grainHue" class="hueOnly" hidden>Hue</label>
+                <div class="controlRow hueOnly" hidden>
+                    <input type="range" id="grainHue"
+                           min="0" max="360" value="200">
+                    <input type="number" id="grainHueValue"
+                           min="0" max="360" value="200">
+                </div>
+
+            </div>
+
+            <div id="LightLeakeffect" hidden>
+
+                <label for="llSpread">Spread</label>
+                <div class="controlRow">
+                    <input type="range" id="llSpread"
+                           min="30" max="200" value="100">
+                    <input type="number" id="llSpreadValue"
+                           min="30" max="200" value="100">
+                </div>
+
+                <label for="llIntensity">Intensity</label>
+                <div class="controlRow">
+                    <input type="range" id="llIntensity"
+                           min="20" max="250" value="120">
+                    <input type="number" id="llIntensityValue"
+                           min="20" max="250" value="120">
+                </div>
+
+                <label for="llCore">Core Glow</label>
+                <div class="controlRow">
+                    <input type="range" id="llCore"
+                           min="0" max="300" value="90">
+                    <input type="number" id="llCoreValue"
+                           min="0" max="300" value="90">
+                </div>
+
+                <label for="llCover">Peak Cover</label>
+                <div class="controlRow">
+                    <input type="range" id="llCover"
+                           min="10" max="100" value="90">
+                    <input type="number" id="llCoverValue"
+                           min="10" max="100" value="90">
+                </div>
+
+                <label for="llDuration">Duration</label>
+                <div class="controlRow">
+                    <input type="range" id="llDuration"
+                           min="1" max="12" value="5">
+                    <input type="number" id="llDurationValue"
+                           min="1" max="12" value="5">
+                </div>
+
+                <label for="llColor">Color</label>
+                <select id="llColor">
+                    <option value="ember">Ember</option>
+                    <option value="golden">Golden Hour</option>
+                    <option value="rose">Rose Film</option>
+                    <option value="cyan">Cross Cyan</option>
+                    <option value="uv">Ultraviolet</option>
+                </select>
+
+            </div>
+
+            <div id="Particleeffect" hidden>
+
+                <label for="ptSize">Size</label>
+                <div class="controlRow">
+                    <input type="range" id="ptSize"
+                           min="1" max="30" value="4">
+                    <input type="number" id="ptSizeValue"
+                           min="1" max="30" value="4">
+                </div>
+
+                <label for="ptSpeed">Speed</label>
+                <div class="controlRow">
+                    <input type="range" id="ptSpeed"
+                           min="0" max="20" value="3">
+                    <input type="number" id="ptSpeedValue"
+                           min="0" max="20" value="3">
+                </div>
+
+                <label for="ptDirection">Direction</label>
+                <div class="controlRow">
+                    <input type="range" id="ptDirection"
+                           min="0" max="360" value="45">
+                    <input type="number" id="ptDirectionValue"
+                           min="0" max="360" value="45">
+                </div>
+
+                <label for="ptCount">Count</label>
+                <div class="controlRow">
+                    <input type="range" id="ptCount"
+                           min="10" max="2000" value="400">
+                    <input type="number" id="ptCountValue"
+                           min="10" max="2000" value="400">
+                </div>
+
+                <label for="ptBlur">Blur</label>
+                <div class="controlRow">
+                    <input type="range" id="ptBlur"
+                           min="0" max="100" value="60">
+                    <input type="number" id="ptBlurValue"
+                           min="0" max="100" value="60">
+                </div>
+
+                <label for="ptHue">Hue</label>
+                <div class="controlRow">
+                    <input type="range" id="ptHue"
+                           min="0" max="360" value="80">
+                    <input type="number" id="ptHueValue"
+                           min="0" max="360" value="80">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BOTTOM: Timeline -->
+
+    <div id="timeline">
+
+        <!-- Top bar: Add Layer (left), Total + Export (right) -->
+        <div id="timelineHeader">
+
+            <button id="addLayer">+ Add Layer</button>
+
+            <div id="totalTime">
+                <span>Total</span>
+                <input
+                    type="text"
+                    id="exportDuration"
+                    value="0:30"
+                    placeholder="0:00"
+                    maxlength="4"
+                    aria-label="Export duration"
+                >
+            </div>
+
+            <!-- Export: main part = all layers in one video,
+                 triangle = pick one layer to export on its own -->
+            <div id="exportGroup">
+                <button id="export">Export</button>
+                <button id="exportMenuButton" aria-haspopup="true" aria-expanded="false" aria-label="Export one layer"></button>
+                <ul id="exportMenu" hidden></ul>
+            </div>
+
+        </div>
+
+        <!-- Timeline Layers -->
+        <div id="timelineLayers">
+
+            <!-- Time Ruler -->
+            <div class="timelineRow" id="timeRulerRow">
+
+                <div class="layerToggle rulerSpacer"></div>
+                <div class="effectName"></div>
+                <div class="overlayMode rulerSpacer"></div>
+
+                <div id="timeRuler">
+                    <span class="rulerTick" style="left: 0%">0:00</span>
+                    <span class="rulerTick" style="left: 25%">0:30</span>
+                    <span class="rulerTick" style="left: 50%">1:00</span>
+                    <span class="rulerTick" style="left: 75%">1:30</span>
+                    <span class="rulerTick" style="left: 100%">2:00</span>
+                </div>
+
+            </div>
+
+            <!-- Layer 1 (no effect until one is picked in the Effect Library).
+                 More layers are added by "+ Add Layer" (see sketch.js) -->
+            <div class="timelineRow layerRow">
+
+                <button class="layerToggle" role="switch" aria-checked="true" aria-label="Show this layer">
+                    <span class="toggleTrack"><span class="toggleKnob"></span></span>
+                </button>
+
+                <div class="effectName">Effect 1</div>
+
+                <select class="overlayMode">
+                    <option value="source-over">Normal</option>
+                    <option value="overlay" selected>Overlay</option>
+                    <option value="screen">Screen</option>
+                    <option value="multiply">Multiply</option>
+                    <option value="soft-light">Soft Light</option>
+                </select>
+
+                <div class="timelineTrack">
+
+                    <div class="effectClip">
+                        <div class="resizeHandle start"></div>
+                        <div class="resizeHandle end"></div>
+                    </div>
+
+                    <button class="trashButton">Trash</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script src="lib/mp4-muxer.js"></script>
+<script src="lightleak.js"></script>
+<script src="particles.js"></script>
+<script src="sketch.js"></script>
+
+</body>
+</html>
